@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="44">
+<title>
+<en>Multiple Shops</en>
+<en>Multiple Shops</en>
+
+</title>
+
+<description>
+<en>
+<![CDATA[This mod allows you to use multiple shops]]></en>
+<de>
+</de>
+</description>
+
+<author>Reddog</author>
+
+<version>1.0.0.0</version>
+
+<multiplayer supported="true" />
+
+<iconFilename>modIcon.dds</iconFilename>
+
+<extraSourceFiles>
+    <sourceFile filename="lib/modhelper.lua"/>
+	<sourceFile filename="rdg_MultiShop.lua" />
+</extraSourceFiles>
+
+</modDesc>

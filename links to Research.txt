@@ -1,0 +1,64 @@
+https://gdn.giants-software.com/thread.php?categoryId=3&threadId=7114   --- Leasing Factors on Items using g_storeManager and EconomyManager
+
+https://gdn.giants-software.com/thread.php?categoryId=3&threadId=8949 --- reference to the makeDisplayItem not working
+
+https://gdn.giants-software.com/thread.php?categoryId=22&threadId=8854 --- Reference to shopmenu
+
+https://gdn.giants-software.com/thread.php?categoryId=22&threadId=7380  ---reference to shopmenu setStoreItem
+
+
+
+
+
+Hi @Reddog | Fen Farms Ltd
+[12:45]
+what you are doing is not going to work
+[12:45]
+if an item is not in the store(manager), it cannot exist on the map / in the save
+[12:45]
+so removing items from there is not likely to yield the results you want to have
+[12:45]
+What I think you want to do is instead filter the content in the UI side of things
+
+@Rahkiin | Chillfurrow Farm
+if an item is not in the store(manager), it cannot exist on the map / in the save
+
+Reddog | Fen Farms Ltd — Yesterday at 12:46
+riiiigght. That would be....suboptimal.
+
+Rahkiin | Chillfurrow Farm — Yesterday at 12:46
+Let me quickly grab the fs19 code
+[12:47]
+So if this is builtin to a map, it is best to be as safe as possible and limit any changes you make.
+[12:48]
+You'll want to focus on the ShopCOntroller class which is only used for the shop
+[12:49]
+local brandItems = self.shopController:getItemsByBrand(brandId) is used to get items of a brand, local categoryItems = self.shopController:getItemsByCategory(categoryName) is used to get items of a category.
+[12:49]
+If you also want to hide empty brands and empty categories... thats a bit harder as it was never designed to do this 
+[12:49]
+So... best not to try that actually. You might have a NH brand with no vehicles in it because you're near a JD dealer
+
+Reddog | Fen Farms Ltd — Yesterday at 12:51
+OK. thanks. I'm guessing that shop search mod is the place to start then as I believe they are using shopController
+
+Rahkiin | Chillfurrow Farm — Yesterday at 12:52
+ShopController.getItemsByBrand = Utils.overwrittenFunction(ShopController.getItemsByBrand, function(controller, superFunc, brandId)
+     local items = superFunc(controller, brandId)
+     -- here, remove items from the list that you dont want shown. Each item is a ShopDisplayItem. You want to focus on its .storeItem property, which is a StoreItem. This in turns contains stuff like 'xmlFilename', 'brandIndex', and 'species'
+     return items
+end)
+[12:53]
+Same thing for ShopController:getItemsByCategory(categoryName) adjust accordingly
+[12:54]
+using e.g. if #items > 0 then table.remove(items, 1) end would remove the first item of all pages 
+[12:55]
+@Reddog | Fen Farms Ltd ^
+
+Reddog | Fen Farms Ltd — Yesterday at 12:56
+OK, thanks a bunch. I'll have a play about with it. I've looked again the shop search mod and they are using the same functionality, but obviously adding in the GUI element. I'll see where I get to.,
+
+Rahkiin | Chillfurrow Farm — Yesterday at 13:02
+if this is a map, the lines of code above is all you really need to get the filtering going
+[13:03]
+to get player position, local x, y, z = getWorldTranslation(g_currentMission.player.rootNode).(edited)
